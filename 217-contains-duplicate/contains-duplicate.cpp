@@ -7,6 +7,7 @@ public:
             
         {
             if(m[nums[i]]==1)
+            
                 return true;               //the moment it finds duplicate, returns true.
             
             m[nums[i]]=1;
@@ -14,6 +15,4 @@ public:
         return false;
     
     }
-    
 };
-
