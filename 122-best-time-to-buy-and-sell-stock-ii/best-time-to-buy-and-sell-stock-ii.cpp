@@ -8,6 +8,7 @@ public:
             if (prices[i+1]-prices[i]>0){
                 sum+=prices[i+1]-prices[i];
             }
+            
         }
         return sum;
     }
