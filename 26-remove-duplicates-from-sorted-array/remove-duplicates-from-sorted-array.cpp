@@ -1,19 +1,16 @@
 class Solution {
 public:
     int removeDuplicates(vector<int>& nums) {
-        //can be done by using a pointer
-        if(nums.size()==1 || nums.size()==0)
-            return nums.size();
-        int duplicate_verify=0;
-        for(int i=0;i<nums.size()-1;i++){
-            
-            if(nums[i]!=nums[i+1]){
-                nums[duplicate_verify++] = nums[i];
+        int insertIndex = 1;
+        for (int i = 1; i < nums.size(); i++) {
+            // We skip to next index if we see a duplicate element
+            if (nums[i - 1] != nums[i]) {
+                // Storing the unique element at insertIndex index and
+                // incrementing the insertIndex by 1
+                nums[insertIndex] = nums[i];
+                insertIndex++;
             }
         }
-
-        nums[duplicate_verify++]=nums[nums.size()-1];
-        return duplicate_verify;
-        
+        return insertIndex;
     }
 };
