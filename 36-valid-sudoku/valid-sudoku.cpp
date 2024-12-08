@@ -1,28 +1,36 @@
 class Solution {
 public:
     bool isValidSudoku(vector<vector<char>>& board) {
-
-        
-        int i, j, c;
-	int row[9][9], col[9][9], block[3][3][9];
-	memset(row, 0, sizeof(row));
-	memset(col, 0, sizeof(col));
-	memset(block, 0, sizeof(block));
-	for (i = 0; i < 9; i++) {
-		for (j = 0; j < 9; j++) {
-		    if(board[i][j] != '.'){
-    			c = board[i][j] - '1';
-    			if (row[i][c] || col[j][c] || block[i / 3][j / 3][c])
-    				return false;
-    			else {
-    				row[i][c] ++;
-    				col[j][c] ++;
-    				block[i / 3][j / 3][c]++;
-    			}
-		    }
-		}
-	}
-	return true;
-        
+        int N = 9;
+        // Use hash set to record the status
+        unordered_set<char> rows[9];
+        unordered_set<char> cols[9];
+        map<pair<int, int>, unordered_set<char>> squares;
+        for (int r = 0; r < N; r++) {
+            for (int c = 0; c < N; c++) {
+                char val = board[r][c];
+                // Check if the position is filled with number
+                if (val == '.') {
+                    continue;
+                }
+                // Check the row
+                if (rows[r].find(val) != rows[r].end()) {
+                    return false;
+                }
+                rows[r].insert(val);
+                // Check the column
+                if (cols[c].find(val) != cols[c].end()) {
+                    return false;
+                }
+                cols[c].insert(val);
+                // Check the box
+                pair<int, int> squareKey = {r / 3, c / 3};
+                if (squares[squareKey].count(val)) {
+                    return false;
+                }
+                squares[squareKey].insert(val);
+            }
+        }
+        return true;
     }
 };
