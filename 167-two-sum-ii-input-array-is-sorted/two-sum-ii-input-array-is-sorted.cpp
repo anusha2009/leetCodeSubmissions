@@ -17,7 +17,7 @@ public:
                 left++;
             }
         }
-        return result;
+        return {-1,-1};
         
     }
 };
