@@ -13,13 +13,10 @@ public:
             else if(height[left]>height[right]){
                 right--;
             }
-            else if(height[left]<height[right]){
+            else if(height[left]<=height[right]){
                 left++;
             }
-            else{
-                left++;
-                right--;
-            }
+            
         }  
         return max;
       
