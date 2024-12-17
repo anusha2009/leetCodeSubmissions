@@ -8,6 +8,7 @@ public:
         int l = 0, u = 0, d = m - 1, r = n - 1;
         
         while (l <= r && u <= d) {
+            
             // Traverse from left to right
             if (l <= r && u <= d) {
                 for (int i = l; i <= r; i++) {
