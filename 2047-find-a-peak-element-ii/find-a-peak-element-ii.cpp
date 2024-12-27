@@ -6,7 +6,7 @@ public:
         int low = 0, high = m-1;
         while(low <= high){
             int maxRow = 0;
-            int midCol = (low+high) >> 1;
+            int midCol = (low+high) / 1;
             for(int row=0; row<n; row++){
                 if(mat[row][midCol] > mat[maxRow][midCol]){
                     maxRow = row;
