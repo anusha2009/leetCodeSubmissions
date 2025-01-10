@@ -5,12 +5,10 @@ public:
             return head;
         int len = 0;
         ListNode* first = new ListNode(0);
-        ListNode* second = new ListNode(0);
         ListNode* third = new ListNode(0);
         first->next = head;
         while(first->next != NULL) {
             len++;
-            second = first;
             first = first->next;
         }
         k = k%len;
