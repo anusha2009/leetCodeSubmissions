@@ -24,9 +24,6 @@ public:
             } else {
                 root[rootY] = rootX;
                 rank[rootX] += 1;
-                if(rank[rootX] + rank[rootY] == size-1) {
-                    return false;
-                }
             }
             count--;
             return true;  
