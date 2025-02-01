@@ -39,6 +39,7 @@ public:
     vector<int> searchRange(vector<int>& nums, int target) {
         if (nums.size() == 0) return {-1, -1};
         int l = binarySearchLeft(nums, target);
+        if(l == -1) return {-1,-1};
         int r = binarySearchRight(nums, target);
 
         return {l, r};
