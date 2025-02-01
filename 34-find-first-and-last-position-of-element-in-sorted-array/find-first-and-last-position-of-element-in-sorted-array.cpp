@@ -1,48 +1,45 @@
 class Solution {
 public:
-    int BS(vector<int>& nums, int s, int e, int target) {
-        int res = -1;
-        while (s <= e) {
-            int mid = s + (e - s) / 2;
-
-            if (nums[mid] == target) {
-                res = mid;
-                e = mid - 1;
-            } else if (nums[mid] < target) {
-                s = mid + 1;
-            } else {
-                e = mid - 1;
+    int binarySearchLeft(vector<int>& nums, int target) {
+            int left = 0;
+            int right = nums.size() - 1;
+            int leftMostIndex = -1;
+            while (left <= right) {
+                int mid = left + (right - left)/2;
+                if (nums[mid] > target) {
+                    right = mid - 1;
+                } else if (nums[mid] < target) {
+                    left = mid + 1;    
+                } else {
+                    leftMostIndex = mid;
+                    right = mid - 1;     
+                }
             }
-        }
-
-        return res;
-    }
-
-    int BS1(vector<int>& nums, int s, int e, int target) {
-        int res = -1;
-        while (s <= e) {
-            int mid = s + (e - s) / 2;
-
-            if (nums[mid] == target) {
-                res = mid;
-                s = mid + 1;
-            } else if (nums[mid] < target) {
-                s = mid + 1;
-            } else {
-                e = mid - 1;
+            return leftMostIndex;
+}
+    int binarySearchRight(vector<int>& nums, int target) {
+            int left = 0;
+            int right = nums.size() - 1;
+            int rightMostIndex = -1;
+            
+            while (left <= right) {
+                int mid = left + (right - left)/2;
+                if (nums[mid] > target) {
+                    right = mid - 1;
+                } else if (nums[mid] < target) {
+                    left = mid + 1;
+                } else {
+                    rightMostIndex = mid;
+                    left = mid + 1;
+                }
             }
-        }
-
-        return res;
-    }
+            return rightMostIndex;
+}
 
     vector<int> searchRange(vector<int>& nums, int target) {
-
-        int s = 0, e = nums.size();
-        int mid = s + (e - s) / 2;
-
-        int l = BS(nums, 0, nums.size() - 1, target);
-        int r = BS1(nums, 0, nums.size() - 1, target);
+        if (nums.size() == 0) return {-1, -1};
+        int l = binarySearchLeft(nums, target);
+        int r = binarySearchRight(nums, target);
 
         return {l, r};
     }
