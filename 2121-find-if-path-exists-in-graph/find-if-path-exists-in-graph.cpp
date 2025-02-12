@@ -1,28 +1,31 @@
 class Solution {
 public:
-    bool dfs(unordered_map<int, vector<int>>& graph, vector<bool>& seen, int currNode, int destination) {
-        if(currNode == destination) {
+    vector<bool> seen;
+    bool validPath(int n, vector<vector<int>>& edges, int source, int destination) {
+        unordered_map<int, vector<int>> graph;
+        for(auto& edge: edges) {
+            graph[edge[0]].push_back(edge[1]);
+            graph[edge[1]].push_back(edge[0]);
+        }
+        seen = vector(n, false);
+        seen[source] = true;
+        return dfs(graph, source, destination);
+    }
+    bool dfs(unordered_map<int, vector<int>>& graph, int source, int destination) {
+        if(source == destination) {
             return true;
         }
-        if(!seen[currNode]) {
-            seen[currNode] = true;
-            for(auto& nextNode : graph[currNode]) {
-                if(dfs(graph, seen, nextNode, destination)) {
+        for(auto& neighbour:graph[source]) {
+            if(!seen[neighbour]) {
+                seen[neighbour] = true;
+                if(neighbour == destination) {
+                    return true;
+                }
+                if(dfs(graph, neighbour, destination)) {
                     return true;
                 }
             }
         }
         return false;
-    }
-    bool validPath(int n, vector<vector<int>>& edges, int source, int destination) {
-        unordered_map<int, vector<int>> graph;
-        vector<bool> seen(n);
-        for(auto& edge:edges) {
-            int a = edge[0];
-            int b = edge[1];
-            graph[a].push_back(b);
-            graph[b].push_back(a);
-        }
-        return dfs(graph, seen, source, destination);
     }
 };
