@@ -45,7 +45,7 @@ public:
                 // Check if the new cell is valid and has a fresh orange.
                 if (new_r >= 0 && new_c >= 0 && new_r < m && new_c < n && grid[new_r][new_c] == 1) {
                     // If this path reaches the fresh orange faster than any previous path.
-                    if (z+1 >= z + 1) {
+                    if (dist[new_r][new_c] >= z + 1) {
                         grid[new_r][new_c] = 2;     // Rot the fresh orange.
                         dist[new_r][new_c] = z + 1; // Update the minimum time to rot this cell.
                         ans = max(ans, z + 1);     // Update the maximum time.
