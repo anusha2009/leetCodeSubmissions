@@ -34,10 +34,7 @@ public:
             auto [currProb, node] = pq.top();
             pq.pop();
 
-            // If this is outdated, skip
-            if (fabs(currProb - result[node]) > 1e-15) {
-                continue;
-            }
+            
 
             // If we've reached end_node, we can return right away
             if (node == end_node) {
