@@ -4,7 +4,7 @@ public:
         vector<vector<int>> graph(numCourses);
         vector<int> indegree(numCourses);
 
-        for (auto p : prerequisites) {
+        for (auto& p : prerequisites) {
             int from = p[1];
             int to = p[0];
             graph[from].push_back(to);
