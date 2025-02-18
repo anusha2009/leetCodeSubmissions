@@ -8,7 +8,7 @@ public:
             int from = p[1];
             int to = p[0];
             graph[from].push_back(to);
-            ++indegree[to];
+            indegree[to]++;
         }
 
         queue<int> zeroDegree;
