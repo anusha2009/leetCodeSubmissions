@@ -24,7 +24,7 @@ public:
             zeroDegree.pop();
             result.push_back(course);
             for (int child : graph[course]) {
-                --indegree[child];
+                indegree[child]--;
                 if (indegree[child] == 0) {
                     zeroDegree.push(child);
                 }
