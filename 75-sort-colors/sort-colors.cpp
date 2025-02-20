@@ -1,22 +1,24 @@
 class Solution {
 public:
     void sortColors(vector<int>& nums) {
-        vector<int> res;
-        for(int num : nums) {
-            if(num==0) {
-                res.push_back(num);
+        int n = nums.size();
+        for(int i = 0; i<n; i++) {
+            if(nums[i] == 0) {
+                nums.push_back(nums[i]);
             }
         }
-        for(int num : nums) {
-            if(num==1) {
-                res.push_back(num);
+        for(int i = 0; i<n; i++) {
+            if(nums[i] == 1) {
+                nums.push_back(nums[i]);
             }
         }
-        for(int num : nums) {
-            if(num==2) {
-                res.push_back(num);
+        for(int i = 0; i<n; i++) {
+            if(nums[i] == 2) {
+                nums.push_back(nums[i]);
             }
         }
-        nums = res;
+        nums.erase(nums.begin(), nums.begin()+n);
+
+        
     }
 };
