@@ -19,7 +19,7 @@ public:
     }
     bool check(int mid, vector<int>& weights, int days) {
         int currSum = 0; 
-        int daysNeeded = 0;
+        int daysNeeded = 1;
         for(int weight : weights) {
             currSum += weight;
             if(currSum>mid) {
@@ -27,6 +27,6 @@ public:
                 daysNeeded++;
             }
         }
-        return daysNeeded+1<=days;
+        return daysNeeded<=days;
     }
 };
