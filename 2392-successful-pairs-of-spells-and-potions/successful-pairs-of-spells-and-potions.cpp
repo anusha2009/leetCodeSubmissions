@@ -1,30 +1,28 @@
 class Solution {
 public:
     vector<int> successfulPairs(vector<int>& spells, vector<int>& potions, long long success) {
+        // Sort the potions array in increasing order.
         sort(potions.begin(), potions.end());
-        vector<int> ans;
+        vector<int> answer;
+        
         int m = potions.size();
+        int maxPotion = potions[m - 1];
         
-        for (double spell: spells) {
-            int i = binarySearch(potions, success / spell);
-            ans.push_back(m - i);
-        }
-        
-        return ans;
-    }
-    
-    int binarySearch(vector<int>& arr, double target) {
-        int left = 0;
-        int right = arr.size();
-        while (left < right) {
-            int mid = left + (right - left) / 2;
-            if (arr[mid] >= target) {
-                right = mid;
-            } else {
-                left = mid + 1;
+        for (auto& spell : spells) {
+            // Minimum value of potion whose product with current spell  
+            // will be at least success or more.
+            long long minPotion = ceil((1.0 * success) / spell);
+            // Check if we don't have any potion which can be used.
+            if (minPotion > maxPotion) {
+                answer.push_back(0);
+                continue;
             }
+            // We can use the found potion, and all potion in its right 
+            // (as the right potions are greater than the found potion).
+            auto index = lower_bound(potions.begin(), potions.end(), minPotion) - potions.begin();
+            answer.push_back(m - index);
         }
-
-        return left;
+        
+        return answer;
     }
 };
