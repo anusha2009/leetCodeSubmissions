@@ -6,7 +6,7 @@ class Solution {
 public:
     double minmaxGasDist(vector<int>& stations, int k) {
         double left = 0;
-        double right = stations.back() - stations.front(); // maximum gap possible
+        double right = 1e8; // maximum gap possible
         double eps = 1e-6;
         
         // Binary search for the smallest mid such that the extra stations needed is <= k.
