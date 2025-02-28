@@ -1,27 +1,34 @@
+#include <vector>
+#include <limits>
+using namespace std;
+
 class Solution {
 public:
-    unordered_map<int, int> memo;
-    int dfs(int amount, vector<int>& coins) {
-        if (amount == 0) return 0;
-        if (memo.find(amount) != memo.end()) 
-            return memo[amount];
-
-        int res = INT_MAX;
-        for (int coin : coins) {
-            if (amount - coin >= 0) {
-                int result = dfs(amount - coin, coins);
-                if (result != INT_MAX) {
-                    res = min(res, 1 + result);
-                }
-            }
-        }
-        
-        memo[amount] = res;
-        return res;
-    }
-
     int coinChange(vector<int>& coins, int amount) {
-        int minCoins = dfs(amount, coins);
-        return minCoins == INT_MAX ? -1 : minCoins;
+        if (amount < 1)
+            return 0;
+        // Initialize memoization vector with 0's (size = amount).
+        vector<int> count(amount, 0);
+        return coinChangeHelper(coins, amount, count);
+    }
+    
+private:
+    int coinChangeHelper(vector<int>& coins, int rem, vector<int>& count) {
+        if (rem < 0)
+            return -1;
+        if (rem == 0)
+            return 0;
+        // If we've already computed the result for this remainder, return it.
+        if (count[rem - 1] != 0)
+            return count[rem - 1];
+        
+        int minCoins = numeric_limits<int>::max();
+        for (int coin : coins) {
+            int res = coinChangeHelper(coins, rem - coin, count);
+            if (res >= 0 && res < minCoins)
+                minCoins = 1 + res;
+        }
+        count[rem - 1] = (minCoins == numeric_limits<int>::max() ? -1 : minCoins);
+        return count[rem - 1];
     }
 };
