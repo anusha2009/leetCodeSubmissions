@@ -1,42 +1,24 @@
-// Utility function to find minimum of two numbers
-int min(int x, int y) {
-	return (x < y) ? x : y;
-}
-
-// Utility function to find maximum of two numbers
-int max(int x, int y) {
-	return (x > y) ? x : y;
-}
-
-
 class Solution {
 public:
-    int maxProduct(vector<int>& arr) {
-        // maintain two variables to store maximum and minimum product
-	// ending at current index
-	long max_ending = arr[0];
-    
-    long min_ending = arr[0];
+    int maxProduct(vector<int>& nums) {
+        if (nums.size() == 0) return 0;
 
-	// to store maximum product sub-array found so far
-	long max_so_far = arr[0];
+        int max_so_far = nums[0];
+        int min_so_far = nums[0];
+        int result = max_so_far;
 
-	// traverse the given array
-	for (int i = 1; i < arr.size(); i++)
-	{
-		long temp = max_ending;
+        for (int i = 1; i < nums.size(); i++) {
+            int curr = nums[i];
+            int temp_max = max(curr, max(max_so_far * curr, min_so_far * curr));
+            min_so_far = min(curr, min(max_so_far * curr, min_so_far * curr));
 
-		// update maximum product ending at current index
-		max_ending = max(arr[i], max(arr[i] * max_ending, arr[i] * min_ending));
+            // Update max_so_far after updates to min_so_far to avoid
+            // overwriting it
+            max_so_far = temp_max;
+            // Update the result with the maximum product found so far
+            result = max(max_so_far, result);
+        }
 
-		// update minimum product ending at current index
-		min_ending = min(arr[i], min(arr[i] * temp, arr[i] * min_ending));
-
-		max_so_far = max(max_so_far, max_ending);
-	}
-
-	// return maximum product
-	return (int)max_so_far;
-
+        return result;
     }
 };
