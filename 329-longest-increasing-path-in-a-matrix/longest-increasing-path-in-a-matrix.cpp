@@ -18,9 +18,7 @@ public:
         return maxPath;
     }
     int dp(int i, int j) {
-        if(i>=m || j>=n) {
-            return 0;
-        }
+        
         if(memo[i][j]!=-1) {
             return memo[i][j];
         }
