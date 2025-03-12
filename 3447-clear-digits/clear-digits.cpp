@@ -1,20 +1,26 @@
 class Solution {
 public:
     string clearDigits(string s) {
-        stack<char> st;
-        string res;
-        for(auto& c : s) {
-            if(isdigit(c)) {
-                st.pop();
+        // This variable keeps track of the actual length of the resulting
+        // string
+        int answerLength = 0;
+
+        // Iterate through each character in the input string
+        for (int charIndex = 0; charIndex < s.size(); charIndex++) {
+            // If the current character is a digit
+            if (isdigit(s[charIndex])) {
+                // Decrement answerLength to remove the last character from the
+                // result
+                answerLength--;
             } else {
-                st.push(c);
+                // Place the character in the "answer" portion of the string
+                s[answerLength++] = s[charIndex];
             }
         }
-        while(!st.empty()) {
-            res += st.top();
-            st.pop();
-        }
-        reverse(res.begin(), res.end());
-        return res;
+
+        // Resize the string to match the actual length of the answer
+        s.resize(answerLength);
+
+        return s;
     }
 };
