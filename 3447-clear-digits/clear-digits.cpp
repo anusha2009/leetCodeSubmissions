@@ -6,7 +6,7 @@ public:
 
         string res;
         for(auto& c : s) {
-            if(numbers.find(c)!=numbers.end()) {
+            if(isdigit(c)) {
                 st.pop();
             } else {
                 st.push(c);
