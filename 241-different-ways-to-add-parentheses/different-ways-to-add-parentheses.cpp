@@ -14,10 +14,17 @@ public:
             return memo[i][j];
         }
         vector<int> results;
-        // Base case: if it's a single digit, return its value as an integer
-        if (isDigit(i, j)) {
-            results.push_back(stoi(expression.substr(i, j - i + 1)));
-            return memo[i][j] = results;
+        // Base case: single digit
+        if (i == j) {
+            results.push_back(expression[i] - '0');
+            return results;
+        }
+        // Base case: two-digit number
+        if (j - i == 1 && isdigit(expression[i])) {
+            int tens = expression[i] - '0';
+            int ones = expression[j] - '0';
+            results.push_back(10 * tens + ones);
+            return results;
         }
         // Iterate over all operators in the expression
         for (int k = i; k <= j; k++) {
@@ -42,13 +49,7 @@ public:
 
         return memo[i][j] = results;
     }
-    // Helper function to check if a substring is just a number
-    bool isDigit(int i, int j) {
-        for (int k = i; k <= j; k++) {
-            if (!isdigit(expression[k])) return false;
-        }
-        return true;
-    }
+    
     // Helper function to check if a character is an operator
     bool isOperator(char ch) {
         return ch == '+' || ch == '-' || ch == '*';
