@@ -1,35 +1,53 @@
+// Define a pair of integers for simplicity
+#define pi pair<int, int>
+
 class Solution {
 public:
+    // Function to find minimum intervals for given queries
     vector<int> minInterval(vector<vector<int>>& intervals, vector<int>& queries) {
-        // sort intervals by size in ascending order
-        sort(
-            intervals.begin(),
-            intervals.end(),
-            [](auto& i1, auto& i2) {
-                return (i1[1] - i1[0]) < (i2[1] - i2[0]);
-            }
-        );
+        // Sort intervals based on their start points
+        sort(intervals.begin(), intervals.end());
 
-        // put queries into tree set
-        set<pair<int, int>> sortedQueries;
-        for (int i = 0; i < queries.size(); ++i) {
-            sortedQueries.insert({ queries[i], i });
+        // Prepare pairs of queries with their indices for later retrieval
+        vector<pair<int, int>> queryPair;
+        for(int i = 0; i < queries.size(); i++) {
+            queryPair.push_back({queries[i], i});
         }
 
-        vector<int> res(queries.size(), -1);
-        
-        // iterate intervals from smallest to biggest
-        for (auto& interval : intervals) {
-            // find queries that are contained in the interval
-            auto start = sortedQueries.lower_bound({ interval[0], -1 });
-            auto end = start;
-            for (end = start; end != sortedQueries.end() && end->first <= interval[1]; ++end) {
-                res[end->second] = interval[1] - interval[0] + 1;
+        // Sort the query pairs based on their values
+        sort(queryPair.begin(), queryPair.end());
+
+        // Min-heap to store intervals' lengths in increasing order
+        priority_queue<pi, vector<pi>, greater<pi>> pq;
+
+        // Result vector to store minimum intervals for each query
+        vector<int> result(queryPair.size(), -1);
+
+        // Pointer for iterating through intervals
+        int j = 0;
+
+        // Iterate through the sorted query pairs
+        for(int i = 0; i < queryPair.size(); i++) {
+            int query = queryPair[i].first;
+
+            // Add intervals that start before or at the current query point
+            while(j < intervals.size() && query >= intervals[j][0]) {
+                pq.push({intervals[j][1] - intervals[j][0] + 1, intervals[j][1]});
+                j++;
             }
-            // remove queries from the set, so we won't face them again
-            sortedQueries.erase(start, end);
+
+            // Remove intervals that end before the current query point
+            while(!pq.empty() && query > pq.top().second) {
+                pq.pop();
+            }
+
+            // If there's a valid interval, update the result vector
+            if(!pq.empty()) {
+                result[queryPair[i].second] = pq.top().first;
+            }
         }
-        
-        return res;
+
+        // Return the final result vector
+        return result;
     }
 };
