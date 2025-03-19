@@ -36,7 +36,7 @@ public:
 
         double low = 0, high = maxY;
         int iterations = 100; // Fixed number of iterations for binary search
-        while (high - low > 1e-5) {
+        while (iterations--) {
             double mid = low + (high - low) / 2;
             double area = func(vec, mid);
             if (area < totalArea / 2) {
