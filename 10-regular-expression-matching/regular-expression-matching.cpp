@@ -1,31 +1,42 @@
-enum Result { TRUE, FALSE, NONE };
-
 class Solution {
 public:
-    vector<vector<Result>> memo;
+    vector<vector<int>> memo;
+    int m, n;
+    string s, p;
 
-    bool isMatch(string text, string pattern) {
-        memo = vector<vector<Result>>(text.size() + 1, vector<Result>(pattern.size() + 1, NONE));
-        return dp(0, 0, text, pattern);
+    bool isMatch(string s, string p) {
+        this->m = s.size();
+        this->n = p.size();
+        this->s = s;
+        this->p = p;
+        memo = vector<vector<int>>(m + 1, vector<int>(n + 1, -1));
+        return dp(0, 0);
     }
 
-    bool dp(int i, int j, string &text, string &pattern) {
-        if (memo[i][j] != NONE) {
-            return memo[i][j] == TRUE;
-        }
-        bool ans;
-        if (j == pattern.size()) {
-            ans = (i == text.size());
-        } else {
-            bool first_match = (i < text.size() && (pattern[j] == text[i] || pattern[j] == '.'));
+    bool dp(int i, int j) {
+        // Base case: If both string and pattern are fully matched
+        if (i == m && j == n) return true;
 
-            if (j + 1 < pattern.size() && pattern[j + 1] == '*') {
-                ans = (dp(i, j + 2, text, pattern) || (first_match && dp(i + 1, j, text, pattern)));
-            } else {
-                ans = first_match && dp(i + 1, j + 1, text, pattern);
-            }
+        // If pattern is exhausted but string is not
+        if (j == n) return false;
+
+        // Check if result is already computed
+        if (memo[i][j] != -1) return memo[i][j];
+
+        bool ans = false;
+
+        // Check if first character of s and p match
+        bool firstMatch = (i < m && (s[i] == p[j] || p[j] == '.'));
+
+        // Handle '*' (zero or more occurrences of preceding character)
+        if (j + 1 < n && p[j + 1] == '*') {
+            ans = dp(i, j + 2) || (firstMatch && dp(i + 1, j));
+        } 
+        // Handle normal character match or '.'
+        else {
+            ans = firstMatch && dp(i + 1, j + 1);
         }
-        memo[i][j] = ans ? TRUE : FALSE;
-        return ans;
+
+        return memo[i][j] = ans;
     }
 };
