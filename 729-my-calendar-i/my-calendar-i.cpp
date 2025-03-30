@@ -1,23 +1,23 @@
 class MyCalendar {
+private:
+    set<pair<int, int>> calendar;
+
 public:
-    vector<vector<int>> interval;
-    MyCalendar() {
-        
-    }
-    
-    bool book(int startTime, int endTime) {
-        for(int i = 0; i<interval.size(); i++) {
-            if(startTime < interval[i][1] && interval[i][0] < endTime) {
-                return false;
-            } 
+    bool book(int start, int end) {
+        const pair<int, int> event{start, end};
+        const auto nextEvent = calendar.lower_bound(event);
+        if (nextEvent != calendar.end() && nextEvent->first < end) {
+            return false;
         }
-        interval.push_back({startTime, endTime});
+
+        if (nextEvent != calendar.begin()) {
+            const auto prevEvent = prev(nextEvent);
+            if (prevEvent->second > start) {
+                return false;
+            }
+        }
+
+        calendar.insert(event);
         return true;
     }
 };
-
-/**
- * Your MyCalendar object will be instantiated and called as such:
- * MyCalendar* obj = new MyCalendar();
- * bool param_1 = obj->book(startTime,endTime);
- */
