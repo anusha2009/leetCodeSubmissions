@@ -20,6 +20,8 @@ public:
         queue<pair<TreeNode*, int>> q;
         int column = 0;
         q.push({root, column});
+        int minCol = 0;
+        int maxCol = 0;
         while(!q.empty()) {
             auto p = q.front();
             q.pop();
@@ -27,17 +29,14 @@ public:
             column = p.second;
             if(root != nullptr) {
                 columnTable[column].push_back(root->val);
+                minCol = min(minCol, column);
+                maxCol = max(maxCol, column);
                 q.push({root->left, column-1});
                 q.push({root->right, column+1});
             }
         }
-        vector<int> keys;
-        for(auto p : columnTable) {
-            keys.push_back(p.first);
-        }
-        sort(keys.begin(), keys.end());
-        for(int k : keys) {
-            output.push_back(columnTable[k]);
+        for(int i = minCol; i<=maxCol; i++) {
+            output.push_back(columnTable[i]);
         }
         return output;
     }
