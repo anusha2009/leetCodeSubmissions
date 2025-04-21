@@ -1,54 +1,82 @@
 class Solution {
 public:
-    void dfs(unordered_map<char, bool>& visited, char currentPlaceholder, unordered_map<char, bool>& placeholders, unordered_map<char, string>& replacement_map, string& ret) {
-        if (visited[currentPlaceholder]) return;
-        if (currentPlaceholder == '_') {
-            ret.push_back('_');
-            return;
-        }
-        visited[currentPlaceholder] = true;
-        // if the current placeholder has another placeholder in its replacements
-        // go dfs to see that placeholder's replacements
-        string replacement = replacement_map[currentPlaceholder];
-        for (auto& c : replacement) {
-            if (replacement_map.find(c) != replacement_map.end()) {
-                dfs(visited, c, placeholders, replacement_map, ret);
-            }
-            else if (c != '%') {
-                ret.push_back(c);
-            } else if (c == '%') {
-                continue;
+    // To replace value of type: "%F%%E%"
+    string substitute(string &input, unordered_map<string, string> &rawMap) {
+        string ans = "";
+        for (int i=0; i<input.size(); i++) {
+            char ch = input[i];
+            if (ch == '%') {
+                string resolved = rawMap[string(1,input[i+1])];
+                ans += resolved;
+                i = i+2; // move to the 2nd%
+            } else {
+                ans += ch;
             }
         }
-        visited[currentPlaceholder] = false;
+        return ans;
     }
-    string applySubstitutions(vector<vector<string>>& replacements, string text) {
-        unordered_map<char, bool> visited;
-        // if the replacements contain the placeholder, we need to check if we can form the placeholder
-        // build the placeholder list
-        unordered_map<char, bool> placeholders;
-        unordered_map<char, string> replacement_map;
-        string ret;
-        string currentPlaceholder;
-        for (int i = 0; i < replacements.size(); ++i) {
-            char first = replacements[i][0][0];
-            string second = replacements[i][1];
-            replacement_map[first] = second;
+
+    // To replace value of type: "%E%_%F%_%D%"
+    string substituteFinalString(string &input, unordered_map<string, string> &rawMap) {
+        string ans = "";
+        int n = input.size();
+        for (int i=0; i<n; i++) {
+            char ch = input[i];
+            if (ch == '%') {
+                string resolved = rawMap[string(1, input[i+1])];
+                ans += resolved;
+                i = i+3; // move to the _
+            }
+            if (i < n)
+                ans += "_";
         }
-        for (int i = 0; i < text.size(); ++i) {
-            // mark the placeholder in map == true
-            char curr = text[i];
-            if (curr == '_') {
-                currentPlaceholder.push_back('_');
-            } 
-            else if (curr != '%') {
-                placeholders[text[i]] = true;
-                currentPlaceholder.push_back(text[i]);
+        return ans;
+    }
+
+    string applySubstitutions(vector<vector<string>>& replacements, string text) {
+        unordered_map<string, string> rawMap;
+        unordered_map<string, vector<string>> adj;
+        unordered_map<string, int> inDegree;
+
+        for (auto& replacement : replacements) {
+            string key = replacement[0];
+            string val = replacement[1];
+            rawMap[key] = val;
+
+            // Parse val for dependencies
+            for (int i = 0; i < val.size(); i++) {
+                if (val[i] == '%') {
+                    i++; // Move to the character;
+                    string prerequisite = string(1, val[i]);
+                    adj[prerequisite].push_back(key);
+                    inDegree[key]++;
+                    i++; // Move to the %;
+                }
             }
         }
-        for (auto& c : currentPlaceholder) {
-            dfs(visited, c, placeholders, replacement_map, ret);
+
+        // Topological sort
+        queue<string> q;
+        for (auto& pair : rawMap) {
+            if (inDegree[pair.first] == 0) {
+                q.push(pair.first);
+            }
         }
-        return ret;
+
+        while (!q.empty()) {
+            string curr = q.front();
+            q.pop();
+
+            for (string& neighbor : adj[curr]) {
+                if (--inDegree[neighbor] == 0) {
+                    // Replace current placeholder in neighbor's raw string
+                    rawMap[neighbor] = substitute(rawMap[neighbor], rawMap);
+                    q.push(neighbor);
+                }
+            }
+        }
+
+        // Final replacement in the text
+        return substituteFinalString(text, rawMap);
     }
 };
