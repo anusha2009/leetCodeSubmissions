@@ -1,7 +1,7 @@
 class Solution {
 public:
     int findJudge(int n, vector<vector<int>>& trust) {
-        if(trust.empty() && n==1) {
+        if(n==1) {
             return n;
         }
         vector<int> indegree(n+1, 0);
