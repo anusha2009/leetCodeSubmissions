@@ -5,7 +5,6 @@ public:
         vector<bool> seen(arr.size(), 0);
         q.push({start, arr[start]});
         seen[start] = 1;
-        int steps = 0;
         while(!q.empty()) {
             auto curr = q.front();
             q.pop();
@@ -22,7 +21,6 @@ public:
                 seen[node-val] = 1;
                 q.push({node-val, arr[node-val]});
             }
-            steps++;
         }
         return false;
 
