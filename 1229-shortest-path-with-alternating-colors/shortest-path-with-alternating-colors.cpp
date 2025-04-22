@@ -1,45 +1,37 @@
 class Solution {
 public:
-    vector<int> shortestAlternatingPaths(int n, vector<vector<int>>& redEdges, vector<vector<int>>& blueEdges) {
-        constexpr int RED = 0;
-        constexpr int BLUE = 1;
-        
-        unordered_map<int, unordered_map<int, vector<int>>> graph;
-        for (vector<int>& edge: redEdges) {
-            int x = edge[0], y = edge[1];
-            graph[RED][x].push_back(y);
+    vector<int> shortestAlternatingPaths(int n, vector<vector<int>>& redEdges,
+                                         vector<vector<int>>& blueEdges) {
+        vector<vector<pair<int, int>>> adj(n);
+        for (auto& redEdge : redEdges) {
+            adj[redEdge[0]].push_back({redEdge[1], 0});
         }
-        
-        for (vector<int> edge: blueEdges) {
-            int x = edge[0], y = edge[1];
-            graph[BLUE][x].push_back(y);
+        for (auto& blueEdge : blueEdges) {
+            adj[blueEdge[0]].push_back(make_pair(blueEdge[1], 1));
         }
-        
-        vector<int> ans(n, INT_MAX);
-        queue<vector<int>> queue;
-        vector<vector<bool>> seen(n, vector(2, false));
-        
-        queue.push({0, RED, 0});
-        queue.push({0, BLUE, 0});
-        seen[0][RED] = true;
-        seen[0][BLUE] = true;
-        
-        while (!queue.empty()) {
-            vector<int> curr = queue.front();
-            queue.pop();
-            int node = curr[0], color = curr[1], steps = curr[2];
-            ans[node] = min(ans[node], steps);
-            
-            for (int neighbor: graph[color][node]) {
-                if (!seen[neighbor][1 - color]) {
-                    seen[neighbor][1 - color] = true;
-                    queue.push({neighbor, 1 - color, steps + 1});
+
+        vector<int> answer(n, -1);
+        vector<vector<bool>> visit(n, vector<bool>(2));
+        queue<vector<int>> q;
+
+        // Start with node 0, with number of steps as 0 and undefined color -1.
+        q.push({0, 0, -1});
+        visit[0][1] = visit[0][0] = true;
+        answer[0] = 0;
+
+        while (!q.empty()) {
+            auto element = q.front();
+            int node = element[0], steps = element[1], prevColor = element[2];
+            q.pop();
+
+            for (auto& [neighbor, color] : adj[node]) {
+                if (!visit[neighbor][color] && color != prevColor) {
+                    visit[neighbor][color] = true;
+                    q.push({neighbor, 1 + steps, color});
+                    if (answer[neighbor] == -1) answer[neighbor] = 1 + steps;
                 }
             }
         }
-        
-        replace(ans.begin(), ans.end(), INT_MAX, -1);
-        
-        return ans;
+        return answer;
     }
 };
