@@ -41,9 +41,12 @@ public:
         for(int i = 0; i<s1.size(); i++) {
             if(s1[i] != s2[i]) {
                 diff++;
+                if(diff > 2) {
+                    return false;
+                }
             }
         }
-        return diff == 0 || diff == 2;
+        return true;
     }
     int numSimilarGroups(vector<string>& strs) {
         UnionFind uf(strs.size());
