@@ -24,7 +24,7 @@ public:
         int n = vec.size();
         if (n == 0) return 0; // Edge case: no squares
 
-        sort(vec.begin(), vec.end(), comp);
+        // sort(vec.begin(), vec.end(), comp);
 
         double totalArea = 0;
         double maxY = 0;
