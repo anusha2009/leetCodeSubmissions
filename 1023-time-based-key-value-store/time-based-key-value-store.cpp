@@ -1,12 +1,12 @@
 class TimeMap {
 public:
-    unordered_map<string, map<int, string>> keyTimeMap;
+    unordered_map<string, vector<pair<int, string>>> keyTimeMap;
     TimeMap() {
     }
     
     void set(string key, string value, int timestamp) {
-        // Store '(timestamp, value)' pair in 'key' bucket.
-        keyTimeMap[key][timestamp] = value;
+        // Push '(timestamp, value)' pair in 'key' bucket.
+        keyTimeMap[key].push_back({ timestamp, value });
     }
     
     string get(string key, int timestamp) {
@@ -15,13 +15,28 @@ public:
             return "";
         }
         
-        auto it = keyTimeMap[key].upper_bound(timestamp);
-        // If iterator points to first element it means, no time <= timestamp exists.
-        if (it == keyTimeMap[key].begin()) {
+        if (timestamp < keyTimeMap[key][0].first) {
             return "";
         }
         
-        // Return value stored at previous position of current iterator.
-        return prev(it)->second;
+        // Using binary search on the array of pairs.
+        int left = 0;
+        int right = keyTimeMap[key].size();
+        
+        while (left < right) {
+            int mid = (left + right) / 2;
+            if (keyTimeMap[key][mid].first <= timestamp) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        
+        // If iterator points to first element it means, no time <= timestamp exists.
+        if (right == 0) {
+            return "";
+        }
+                
+        return keyTimeMap[key][right - 1].second;
     }
 };
