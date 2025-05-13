@@ -1,37 +1,26 @@
 class Solution {
 public:
     vector<vector<int>> threeSum(vector<int>& nums) {
-        if(nums.size() <=2) return {};
-    vector<vector<int> > rtn;
-    sort(nums.begin(), nums.end());
-    
-    for(int i =0; i < nums.size();){
-        
-        int start = i+1, end = nums.size()-1;
-
-        while(start < end){
-            if(nums[i]+nums[start]+nums[end] == 0){
-                rtn.push_back({nums[i],nums[start],nums[end]});
-                start++;
-                end--;
-                while((start < end) && nums[start] == nums[start-1]) start++;
-                while((start < end) && nums[end] == nums[end+1]) end--;
-
-            }else if(nums[i]+nums[start]+nums[end]<0){
-                start++;
-                while((start < end) && nums[start] == nums[start-1]) start++;
-            }else{
-                end--;
-                while((start < end) && nums[end] == nums[end+1]) end--;
+        sort(begin(nums), end(nums));
+        vector<vector<int>> res;
+        for (int i = 0; i < nums.size() && nums[i] <= 0; ++i)
+            if (i == 0 || nums[i - 1] != nums[i]) {
+                twoSumII(nums, i, res);
+            }
+        return res;
+    }
+    void twoSumII(vector<int>& nums, int i, vector<vector<int>>& res) {
+        int lo = i + 1, hi = nums.size() - 1;
+        while (lo < hi) {
+            int sum = nums[i] + nums[lo] + nums[hi];
+            if (sum < 0) {
+                ++lo;
+            } else if (sum > 0) {
+                --hi;
+            } else {
+                res.push_back({nums[i], nums[lo++], nums[hi--]});
+                while (lo < hi && nums[hi] == nums[hi + 1]) hi--;
             }
         }
-        
-        i++;
-        while((i < nums.size()) && nums[i] == nums[i-1])
-            i++;
-        
-    }
-    return rtn;
-
     }
 };
