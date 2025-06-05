@@ -37,6 +37,6 @@ public:
             return "";
         }
                 
-        return keyTimeMap[key][right - 1].second;
+        return keyTimeMap[key][left - 1].second;
     }
 };
