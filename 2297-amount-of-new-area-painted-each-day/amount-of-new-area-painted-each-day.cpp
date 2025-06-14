@@ -1,118 +1,47 @@
-
-class UnionFind
-{
-    private:
-        vector<int> parent;
-
-    public:
-        UnionFind(int n)
-        {
-            parent.resize(n);
-            iota(begin(parent), end(parent), 0);
-        }
-    
-        int find_parent(int x)
-        {
-            if (parent[x] == x)
-            {
-                return x;
-            }
-            return parent[x] = find_parent(parent[x]);
-        }
-
-        void merge(int x, int y)
-        {
-            parent[x] = find_parent(y);
-
-        }
-};
-
-
 class Solution {
 public:
     vector<int> amountPainted(vector<vector<int>>& paint) {
+    map<int, int> paintedIntervals; // maps start -> end of already painted segments
+    vector<int> result;
 
-        // return solve_set(paint);
+    for (auto& segment : paint) {
+        int start = segment[0], end = segment[1];
 
-        return solve_dsu(paint);
-        
-    }
+        // Find the first painted interval that starts after `start`
+        auto next = paintedIntervals.upper_bound(start);
+        auto current = next;
 
-    vector<int> solve_dsu(vector<vector<int>>& paint)
-    {
-
-        set<int> x_coordinates_set;
-        // take unique x-coordiantes of paint
-        for (auto& paint : paint)
-        {
-            x_coordinates_set.insert(paint[0]);
-            x_coordinates_set.insert(paint[1]);
-        }
-
-        vector<int> x_coordinates(x_coordinates_set.begin(), x_coordinates_set.end());
-
-        int n = x_coordinates.size();
-        
-        // map x_coordinates to indixes for DSU
-        unordered_map<int, int> x_coordinates_to_indixes;
-        for (int i=0; i< n; i++)
-        {
-            x_coordinates_to_indixes[x_coordinates[i]] = i;
-        }
-
-        vector<int> result;
-        UnionFind uf(n);
-
-        for (auto& pt : paint)
-        {
-            int left = x_coordinates_to_indixes[pt[0]];
-            int right = x_coordinates_to_indixes[pt[1]];
-
-            int painted_area = 0;
-
-            int new_left = uf.find_parent(left);
-
-            while (new_left < right)
-            {
-                painted_area += x_coordinates[new_left + 1] - x_coordinates[new_left];
-
-                // merge new_left
-                uf.merge(new_left, right);
-
-                new_left = uf.find_parent(new_left + 1);
+        // Check if there's an overlapping interval before `start`
+        if (current != paintedIntervals.begin()) {
+            auto prevIt = prev(current);
+            if (prevIt->second >= start) {
+                // Extend current to include the overlapping one
+                current = prevIt;
+                start = current->second;
+            } else {
+                // No overlap, insert new interval
+                current = paintedIntervals.insert({start, end}).first;
             }
-            result.push_back(painted_area);
+        } else {
+            // No previous interval, insert this as a new one
+            current = paintedIntervals.insert({start, end}).first;
+        }
+        int newPaint = end - start;
+
+        // Merge all overlapping future intervals and reduce painted area
+        while (next != paintedIntervals.end() && next->first < end) {
+            int overlapStart = next->first;
+            int overlapEnd = next->second;
+            newPaint -= min(end, overlapEnd) - overlapStart;
+            end = max(end, overlapEnd);
+            paintedIntervals.erase(next++);
         }
 
-        return result;
+        // Update the merged interval
+        current->second = max(current->second, end);
+        result.push_back(max(0, newPaint));
     }
 
-    // TLE
-    vector<int> solve_set(vector<vector<int>>& paint)
-    {
-        vector<int> result;
-        set<int> paint_lookup;
-
-        for (auto& pt : paint)
-        {
-            int st = pt[0];
-            int end = pt[1];
-
-            int count = 0;
-
-            for (int i=st; i<end; i++)
-            {
-                if (!paint_lookup.count(i))
-                {
-                    count++;
-                }
-                paint_lookup.insert(i);
-            }
-
-            
-            result.push_back(count);
-        }
-        
-        return result;
-    }
+    return result;
+}
 };
