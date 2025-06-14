@@ -1,30 +1,51 @@
 class Solution {
 public:
     vector<int> amountPainted(vector<vector<int>>& paint) {
-        set<pair<int, int> > leftArea;
-        leftArea.insert({ 0, 5e4 + 3 });
-        vector<int> result(paint.size(), 0);
-        
-        for(int i = 0; i < paint.size(); i++) {
-            auto lowerIt = leftArea.lower_bound({ paint[i][0], 0 });
-            auto upperIt = leftArea.upper_bound({ paint[i][1], 1e9 });    
-            if(lowerIt != leftArea.begin()) lowerIt--;
-            vector<pair<int, int> > toDelete, toInsert;
+        set<pair<int, int>> painted;  // stores already painted intervals
+        vector<int> result;
 
-            for(auto it = lowerIt; it != upperIt; it++) {
-                if(it->second < paint[i][0] || it->first > paint[i][1]) continue;
-                result[i] += min(paint[i][1], it->second) - max(paint[i][0], it->first);
-                if(it->first < paint[i][0]) {
-                    toInsert.push_back({ it->first, paint[i][0] });
+        for (auto& interval : paint) {
+            int start = interval[0], end = interval[1];
+            int newPaint = 0;
+            auto it = painted.lower_bound({start, start}); // find first interval ≥ start
+
+            // Step 1: check previous interval (could overlap)
+            if (it != painted.begin()) {
+                auto prev = std::prev(it);
+                if (prev->second >= start) {
+                    it = prev;
                 }
-                if(it->second > paint[i][1]) {
-                    toInsert.push_back({ paint[i][1], it->second });
-                }
-                toDelete.push_back(*it);
             }
-            for(int j = 0; j < toDelete.size(); j++) leftArea.erase(toDelete[j]);
-            for(int j = 0; j < toInsert.size(); j++) leftArea.insert(toInsert[j]);
+
+            // Step 2: iterate overlapping intervals
+            vector<set<pair<int, int>>::iterator> toErase;
+            int mergedStart = start, mergedEnd = end;
+
+            while (it != painted.end() && it->first <= end) {
+                // calculate unpainted area before this interval
+                if (start < it->first) {
+                    newPaint += it->first - start;
+                }
+                // update current merge window
+                start = max(start, it->second);
+                mergedStart = min(mergedStart, it->first);
+                mergedEnd = max(mergedEnd, it->second);
+                toErase.push_back(it++);
+            }
+
+            // If we still have unpainted part at the end
+            if (start < end) {
+                newPaint += end - start;
+            }
+
+            // Step 3: remove old intervals and insert merged one
+            for (auto& e : toErase) {
+                painted.erase(e);
+            }
+            painted.insert({mergedStart, mergedEnd});
+            result.push_back(newPaint);
         }
+
         return result;
     }
 };
